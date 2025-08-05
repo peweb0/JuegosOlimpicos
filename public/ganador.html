@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>¡Ganador!</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { min-height: 100vh; }
+    .winner-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+    }
+    .winner-trophy {
+      font-size: 6rem;
+      margin-bottom: 0.3em;
+      animation: bounce-trophy 1.1s cubic-bezier(.4,2,.6,1);
+      display: inline-block;
+    }
+    @keyframes bounce-trophy {
+      0% { transform: scale(0.7) translateY(-60px); }
+      60% { transform: scale(1.18) translateY(10px); }
+      80% { transform: scale(0.95) translateY(-8px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+    .winner-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #c97c00;
+      margin-bottom: 0.2em;
+    }
+    .winner-name-highlight {
+      font-size: 2.3rem;
+      font-weight: bold;
+      margin-bottom: 0.7em;
+      letter-spacing: 0.04em;
+      color: #fd5e53;
+      filter: drop-shadow(0 2px 10px #f9b60044) drop-shadow(0 1px 0 #fffbe7);
+      animation: winner-pop 1.1s cubic-bezier(.4,2,.6,1), heartbeat 1.25s cubic-bezier(.4,0.1,.6,1) infinite;
+    }
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      15% { transform: scale(1.13); }
+      30% { transform: scale(0.97); }
+      45% { transform: scale(1.08); }
+      60% { transform: scale(0.98); }
+      75% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+    .winner-name-highlight::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      width: 120%;
+      height: 40%;
+      pointer-events: none;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(255,255,200,0.18) 0%, rgba(255,255,255,0) 80%);
+      filter: blur(2px);
+      z-index: -1;
+      animation: winner-glow 2.2s ease-in-out infinite alternate;
+    }
+    @keyframes winner-glow {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+    .winner-name-highlight span {
+      font-size: 2.2rem;
+      color: #fd5e53;
+      font-weight: 900;
+      padding-left: 0.15em;
+    }
+    @keyframes winner-pop {
+      0% { transform: scale(0.7); opacity: 0; }
+      60% { transform: scale(1.18); opacity: 1; }
+      80% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+    .winner-btn {
+      font-size: 1.2rem;
+      padding: 0.7em 2em;
+      border-radius: 2em;
+      border: none;
+      background: linear-gradient(90deg, #fd5e53 0%, #f9b600 100%);
+      color: #fffbe7;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(253,94,83,0.14);
+      cursor: pointer;
+      margin-top: 1.4em;
+      transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
+    }
+    .winner-btn:hover, .winner-btn:focus {
+      background: linear-gradient(90deg, #f9b600 0%, #fd5e53 100%);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 6px 24px rgba(253,94,83,0.22);
+    }
+    .winner-intrigue-show {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(15,12,6,0.92);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 0.5s;
+    }
+    .winner-intrigue-text {
+      font-size: 2.4rem;
+      color: #fffbe7;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 24px #f9b60066, 0 1px 0 #fffbe7;
+      animation: intrigue-pop 1.1s cubic-bezier(.4,2,.6,1);
+    }
+    @keyframes intrigue-pop {
+      0% { opacity: 0; transform: scale(0.7); }
+      60% { opacity: 1; transform: scale(1.13); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .dots {
+      display: inline-block;
+      width: 1.5em;
+      text-align: left;
+      font-weight: bold;
+      font-size: 1.1em;
+      line-height: 1;
+    }
+    .dots span {
+      opacity: 0;
+      animation: dot-fade 1.2s infinite;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+      font-size: inherit;
+      font-weight: inherit;
+      transition: opacity 0.2s;
+    }
+    .dots span:nth-child(1) { animation-delay: 0s; }
+    .dots span:nth-child(2) { animation-delay: 0.25s; }
+    .dots span:nth-child(3) { animation-delay: 0.5s; }
+    @keyframes dot-fade {
+      0%, 80%, 100% { opacity: 0; }
+      20%, 60% { opacity: 1; }
+    }
+  </style>
+</head>
+  <body>
+    <div id="winner-intrigue" class="winner-intrigue-show">
+      <span class="winner-intrigue-text">Y el ganador es<span class="dots"><span>.</span><span>.</span><span>.</span></span></span>
+    </div>
+    <div class="winner-container" style="display:none">
+      <div class="winner-trophy">🏆</div>
+      <div id="winnerName" class="winner-title winner-name-highlight"></div>
+      <button class="winner-btn" onclick="window.location.href='index.html'">Volver a la tabla</button>
+    </div>
+    <canvas id="confettiCanvas" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:10;display:none;"></canvas>
+    <canvas id="fireworksCanvas" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:11;"></canvas>
+    <canvas id="starsCanvas" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:12;"></canvas>
+    <script>
+  // --- INTRIGA: Mostrar primero "Y el ganador es..." ---
+  setTimeout(()=>{
+    document.getElementById('winner-intrigue').style.opacity = '0';
+    setTimeout(()=>{
+      document.getElementById('winner-intrigue').style.display = 'none';
+      document.querySelector('.winner-container').style.display = '';
+      startConfetti(); // Lanzar confetti justo después del reveal
+    }, 800); // Aumentado de 420ms a 800ms para la transición
+  }, 2000); // Aumentado de 1800ms a 2800ms (2.8 segundos)
+
+  // Obtener ganador del localStorage (primer puesto del ranking)
+  function getWinnerName() {
+    try {
+      const data = JSON.parse(localStorage.getItem('participants')||'[]');
+      if (!Array.isArray(data) || !data.length) return '';
+      // Ordenar igual que en script.js (oro, plata, bronce, nombre)
+      data.sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze||a.name.localeCompare(b.name));
+      return data[0]?.name||'';
+    } catch { return ''; }
+  }
+  let winner = sessionStorage.getItem('winnerName');
+  if (!winner) winner = getWinnerName();
+  document.getElementById('winnerName').innerHTML = winner
+    ? '¡Felicidades <span style="color:#fd5e53; font-weight:900; font-size:2.5rem; text-shadow:0 2px 10px #f9b60044,0 1px 0 #fffbe7;">'+winner+'</span>!'
+    : '¡Felicidades!';
+
+  // ===== CONFETTI INFINITO =====
+  let confettiCanvas, ctxC, confetti = [], confettiAnimId;
+  function startConfetti() {
+    confettiCanvas = document.getElementById('confettiCanvas');
+    confettiCanvas.style.display = '';
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    ctxC = confettiCanvas.getContext('2d');
+    confetti = [];
+    spawnConfetti();
+    confettiAnimId = requestAnimationFrame(drawConfetti);
+  }
+  function stopConfetti() {
+    if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+    if (confettiCanvas) confettiCanvas.style.display = 'none';
+    confetti = [];
+  }
+  function spawnConfetti() {
+    for(let i=0;i<10;i++) {
+      confetti.push({
+        x: Math.random()*confettiCanvas.width,
+        y: -20,
+        r: 6+Math.random()*7,
+        color: `hsl(${Math.random()*360},98%,60%)`,
+        vy: 2+Math.random()*3,
+        vx: Math.random()*2-1,
+        rot: Math.random()*6.28,
+        vr: (Math.random()-0.5)*0.15
+      });
+    }
+  }
+  function drawConfetti() {
+    ctxC.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    for(const c of confetti) {
+      ctxC.save();
+      ctxC.translate(c.x,c.y);
+      ctxC.rotate(c.rot);
+      ctxC.fillStyle = c.color;
+      ctxC.fillRect(-c.r/2,-c.r/2,c.r,c.r*1.3);
+      ctxC.restore();
+      c.x += c.vx;
+      c.y += c.vy;
+      c.rot += c.vr;
+    }
+    confetti = confetti.filter(c=>c.y<confettiCanvas.height+30);
+    if(confetti.length<120) spawnConfetti();
+    requestAnimationFrame(drawConfetti);
+  }
+  drawConfetti();
+
+  // ===== FIREWORKS INFINITOS =====
+  const fireworksCanvas = document.getElementById('fireworksCanvas');
+  const ctxF = fireworksCanvas.getContext('2d');
+  let fireworks = [];
+  const fwColors = ['#ff3','#f36','#3cf','#6f3','#fc3','#f39','#39f','#fff','#f60'];
+  
+  function initFireworks() {
+    if (!fireworksCanvas) return;
+    fireworksCanvas.width = window.innerWidth;
+    fireworksCanvas.height = window.innerHeight;
+    fireworks = [];
+    // Iniciar con 3 fuegos artificiales
+    for(let i = 0; i < 3; i++) {
+      setTimeout(() => spawnFirework(), i * 800);
+    }
+    if (typeof drawFireworks === 'function') {
+      drawFireworks();
+    }
+  }
+  function spawnFirework() {
+    const x = Math.random()*(fireworksCanvas.width*0.8)+fireworksCanvas.width*0.1;
+    const y = Math.random()*(fireworksCanvas.height*0.2)+fireworksCanvas.height*0.07;
+    const particles = [];
+    const n = 22+Math.floor(Math.random()*10);
+    for(let i=0;i<n;i++) {
+      const a = (Math.PI*2*i)/n;
+      const s = 2.2+Math.random()*3.2;
+      particles.push({
+        x, y,
+        vx: Math.cos(a)*s,
+        vy: Math.sin(a)*s,
+        alpha: 1,
+        color: fwColors[Math.floor(Math.random()*fwColors.length)],
+        radius: 2.1+Math.random()*1.7
+      });
+    }
+    fireworks.push({particles});
+  }
+  function drawFireworks() {
+    ctxF.clearRect(0,0,fireworksCanvas.width,fireworksCanvas.height);
+    for(const fw of fireworks) {
+      for(const p of fw.particles) {
+        ctxF.globalAlpha = p.alpha;
+        ctxF.beginPath();
+        ctxF.arc(p.x,p.y,p.radius,0,Math.PI*2);
+        ctxF.fillStyle = p.color;
+        ctxF.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.97;
+        p.vy *= 0.97;
+        p.vy += 0.02;
+        p.alpha *= 0.97-0.01*Math.random();
+      }
+    }
+    fireworks = fireworks.filter(fw=>fw.particles.some(p=>p.alpha>0.08));
+    if(Math.random()<0.04) spawnFirework();
+    requestAnimationFrame(drawFireworks);
+    ctxF.globalAlpha = 1;
+  }
+  drawFireworks();
+  // Inicializar efectos visuales cuando el DOM esté listo
+  function initAllEffects() {
+    // Asegurar que los canvas tengan el tamaño correcto
+    if (fireworksCanvas) {
+      fireworksCanvas.width = window.innerWidth;
+      fireworksCanvas.height = window.innerHeight;
+    }
+    
+    if (starsCanvas) {
+      starsCanvas.width = window.innerWidth;
+      starsCanvas.height = window.innerHeight;
+    }
+    
+    // Iniciar efectos
+    initFireworks();
+    initStars();
+    
+    // Configurar para que los efectos se reinicien al cambiar el tamaño de la ventana
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (fireworksCanvas) {
+          fireworksCanvas.width = window.innerWidth;
+          fireworksCanvas.height = window.innerHeight;
+        }
+        if (starsCanvas) {
+          starsCanvas.width = window.innerWidth;
+          starsCanvas.height = window.innerHeight;
+        }
+      }, 250);
+    });
+  }
+  
+  // Iniciar efectos cuando se muestre el ganador
+  if (document.querySelector('.winner-container').style.display !== 'none') {
+    // Si ya se mostró el ganador, iniciar efectos
+    setTimeout(initAllEffects, 100);
+  } else {
+    // Si no, esperar a que se muestre el ganador
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'style' && 
+            document.querySelector('.winner-container').style.display !== 'none') {
+          setTimeout(initAllEffects, 100);
+          observer.disconnect();
+        }
+      });
+    });
+    
+    observer.observe(document.querySelector('.winner-container'), {
+      attributes: true
+    });
+  }
+  
+  // ===== LLUVIA DE ESTRELLAS DORADAS =====
+  const starsCanvas = document.getElementById('starsCanvas');
+  const ctxS = starsCanvas.getContext('2d');
+  let stars = [];
+  
+  function initStars() {
+    if (!starsCanvas) return;
+    starsCanvas.width = window.innerWidth;
+    starsCanvas.height = window.innerHeight;
+    stars = [];
+    // Crear estrellas iniciales
+    for(let i = 0; i < 40; i++) {
+      spawnStar();
+    }
+    if (typeof drawStars === 'function') {
+      drawStars();
+    }
+  }
+  function spawnStar() {
+    stars.push({
+      x: Math.random()*starsCanvas.width,
+      y: -10,
+      r: 3+Math.random()*6,
+      vy: 1.3+Math.random()*1.3,
+      twinkle: Math.random()*Math.PI*2,
+      twinkleSpeed: 0.03+Math.random()*0.03
+    });
+  }
+  function drawStars() {
+    ctxS.clearRect(0,0,starsCanvas.width,starsCanvas.height);
+    for(const s of stars) {
+      ctxS.save();
+      ctxS.globalAlpha = 0.7+0.3*Math.sin(s.twinkle);
+      ctxS.beginPath();
+      // Dibuja estrella de 5 puntas
+      const spikes = 5;
+      const outerRadius = s.r;
+      const innerRadius = s.r*0.45;
+      let rot = Math.PI/2*3;
+      let x = 0, y = 0;
+      ctxS.translate(s.x, s.y);
+      ctxS.moveTo(0, -outerRadius);
+      for(let i=0;i<spikes;i++){
+        x = Math.cos(rot) * outerRadius;
+        y = Math.sin(rot) * outerRadius;
+        ctxS.lineTo(x, y);
+        rot += Math.PI/spikes;
+        x = Math.cos(rot) * innerRadius;
+        y = Math.sin(rot) * innerRadius;
+        ctxS.lineTo(x, y);
+        rot += Math.PI/spikes;
+      }
+      ctxS.lineTo(0, -outerRadius);
+      ctxS.closePath();
+      ctxS.fillStyle = 'gold';
+      ctxS.shadowColor = '#fffbe7';
+      ctxS.shadowBlur = 12;
+      ctxS.fill();
+      ctxS.restore();
+      s.y += s.vy;
+      s.twinkle += s.twinkleSpeed;
+    }
+    stars = stars.filter(s=>s.y<starsCanvas.height+20);
+    if(stars.length<55) for(let i=0;i<2;i++) spawnStar();
+    requestAnimationFrame(drawStars);
+  }
+  // Manejar redimensionamiento
+  window.addEventListener('resize',()=>{
+    // Redimensionar y reiniciar efectos
+    initFireworks();
+    initStars();
+    confettiCanvas.width=window.innerWidth;
+    confettiCanvas.height=window.innerHeight;
+    fireworksCanvas.width=window.innerWidth;
+    fireworksCanvas.height=window.innerHeight;
+    starsCanvas.width=window.innerWidth;
+    starsCanvas.height=window.innerHeight;
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Juegos Olímpicos Martínez 2025</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header>
+    <h1 class="main-title">Juegos Olímpicos Martínez</h1>
+    <img src="imagen1.png" alt="Juegos Olímpicos 2025" class="title-image" />
+  </header>
+  <main>
+    <section class="table-section">
+      <div class="table-controls">
+        <button id="resetButton">Reiniciar tabla</button>
+        <button id="exportButton">Exportar a CSV</button>
+        <button id="guardarButton">Guardar</button>
+      </div>
+      <div class="table-scroll">
+        <table id="rankingTable">
+        <thead>
+          <tr>
+            <th>Posición</th>
+            <th>Nombre</th>
+            <th>Oro 🥇</th>
+            <th>Plata 🥈</th>
+            <th>Bronce 🥉</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Participantes serán insertados aquí -->
+        </tbody>
+      </table>
+      </div>
+    </section>
+    <section class="form-section">
+      <h2>Agregar participante</h2>
+      <form id="addForm" autocomplete="off">
+        <input required type="text" id="nameInput" placeholder="Nombre" maxlength="30"/>
+        <input required type="number" id="goldInput" placeholder="Oro" min="0" max="99"/>
+        <input required type="number" id="silverInput" placeholder="Plata" min="0" max="99"/>
+        <input required type="number" id="bronzeInput" placeholder="Bronce" min="0" max="99"/>
+        <button type="submit">Agregar</button>
+      </form>
+    </section>
+    <section class="podium-section">
+      <h2>Podio</h2>
+      <div class="podium">
+        <div class="podium-spot second">
+          <p>🥈</p>
+          <p id="second-place"><span class="podium-name">Segundo</span></p>
+        </div>
+        <div class="podium-spot first">
+          <p>🥇</p>
+          <p id="first-place"><span class="podium-name">Primero</span></p>
+        </div>
+        <div class="podium-spot third">
+          <p>🥉</p>
+          <p id="third-place"><span class="podium-name">Tercero</span></p>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:center; margin-top:2.2em;">
+        <button id="announceWinnerBtn" class="announce-btn">🎤 Anunciar el ganador</button>
+      </div>
+    </section>
+  </main>
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2>Editar participante</h2>
+      <form id="editForm">
+        <input required type="text" id="editName" maxlength="30"/>
+        <input required type="number" id="editGold" min="0" max="99"/>
+        <input required type="number" id="editSilver" min="0" max="99"/>
+        <input required type="number" id="editBronze" min="0" max="99"/>
+        <button type="submit">Guardar cambios</button>
+      </form>
+    </div>
+  </div>
+  <footer>
+    <br><br>
+    <center><p>© 2025 Juegos Olímpicos | Página oficial</p></center>
+    <br>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
